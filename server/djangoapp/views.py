@@ -97,15 +97,78 @@ def signup_request(request):
 # Update the `get_dealerships` view to render the index page with a list of dealerships
 def get_dealerships(request):
     context = {}
-    if request.method == "GET":
+    if request.method == "GET":          
+        url = "https://164bc8d6.us-south.apigw.appdomain.cloud/api/dealership"                 
+        # Get dealers from the URL
+        dealerships = get_dealers_from_cf(url)
+        # Concat all dealer's short name
+        dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
+        # Return a list of dealer short name
+
+        context['dealerships'] = dealerships
         return render(request, 'djangoapp/index.html', context)
 
 
 # Create a `get_dealer_details` view to render the reviews of a dealer
-# def get_dealer_details(request, dealer_id):
-# ...
+def get_dealer_details(request, dealer_id):
+    context = {}
+    url = "https://164bc8d6.us-south.apigw.appdomain.cloud/api/review"
+    
+    # Get dealers from the URL
+    reviews = get_dealer_reviews_from_cf(url,dealer_id)
+    context['reviews'] = reviews
+    context['dealer'] = dealer_id
+    # Concat all dealer's short name
+    dealer_details = ' '.join([dealer.review for dealer in reviews])
+    # Return a list of dealer short name
+    return render(request, 'djangoapp/dealer_details.html', context)
+
 
 # Create a `add_review` view to submit a review
-# def add_review(request, dealer_id):
-# ...
+def add_review(request, dealer_id):
 
+    if request.method == "POST":
+        if request.user.is_authenticated:
+            url = "https://fa921fb7.us-south.apigw.appdomain.cloud/api/review"
+            url2 = "https://fa921fb7.us-south.apigw.appdomain.cloud/api/dealership"
+
+            car = CarModel.objects.get(id=request.POST['car'])
+            dealer = get_dealer_by_id(url2, dealer_id)
+
+            if request.POST['purchasecheck'] == "on":
+                purchase = True
+            else:
+                purchase = False
+
+            payload = {
+                'review': {
+                    "car_make": car.model_id.name,
+                    "car_model": car.name,
+                    "car_year": car.year.year,
+                    "dealership": dealer_id,
+                    "name": dealer.full_name,
+                    "purchase": purchase,
+                    "purchase_date": request.POST['purchasedate'],
+                    "review": request.POST['content']
+                }
+            }
+            
+            json_result = post_request(url, payload)
+            review = json_result
+
+            context = {}
+            context['dealer'] = dealer
+            context['cars'] = list(CarModel.objects.all())
+            context['created'] = True
+            return render(request, 'djangoapp/add_review.html', context)
+            
+        else:
+            raise PermissionDenied("Only auth users can post.")
+    else:
+        context = {}
+        url = "https://fa921fb7.us-south.apigw.appdomain.cloud/api/dealership"
+        context['dealer'] = get_dealer_by_id(url, dealer_id)
+        context['cars'] = list(CarModel.objects.all())
+        print(context['cars'])
+        return render(request, 'djangoapp/add_review.html', context)
+        

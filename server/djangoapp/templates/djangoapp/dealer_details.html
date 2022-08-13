@@ -3,15 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <title>Dealership Review</title>
-    {% load static %}
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <link href="https://unpkg.com/bootstrap-table@1.18.2/dist/bootstrap-table.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/bootstrap-table@1.18.2/dist/bootstrap-table.min.js"></script>
+    <script src="https://unpkg.com/bootstrap-table@1.18.2/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>
+ 
 </head>
 
     <body>
 
     <!--Add a nav bar here -->
+    {% include "djangoapp/nav.html" %}  
+    <br>
 
     <!-- Add reviews as cards -->
+    <div class="container">
+      {% if user.is_authenticated %}
+        <a href="{% url 'djangoapp:addrev' dealer  %}">(Add a new review)</a>
+      {% endif %}
+      <br>
+      <div class="row">
+
+        {% for review in reviews %}
+        <div class="card col-md-3 m-1">
+          <div class="card-header">
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">{{ review.car_make }}, {{review.car_model }}</h5> 
+            <h5 class="card-title">{{ review.car_year }}</h5> 
+            <p>{{ review.review }}</p> 
+          </div>
+        </div>
+        {% endfor %}
+
+        {% if not reviews %}
+          <div class="alert alert-warning w-100" role="alert">
+            No reviews for this dealer.
+          </div>
+        {% endif %}
+
+      </div>
+    </div>
 
     </body>
 

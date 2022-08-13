@@ -19,7 +19,34 @@
 
     <br>
     <!--Add a dealer table here -->
-
+   <div class="container">
+       <table class="table" id="table" data-filter-control="true">
+        <thead>
+          <tr>
+            <th data-field="id">Id</th>
+            <th data-field="full-name">Dealer Name</th>
+            <th data-field="city">City</th>
+            <th data-field="address">Address</th>
+            <th data-field="Zip">Zip</th>
+            <th data-filter-control="select" data-field="State">
+              State
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for dealer in dealerships %}
+            <tr>
+              <td>{{dealer.id}}</td>
+              <td><a href="{% url 'djangoapp:details' dealer.id %}">{{dealer.full_name}}</a></td>
+              <td>{{dealer.city}}</td>
+              <td>{{dealer.address}}</td>
+              <td>{{dealer.zip}}</td>
+              <td>{{dealer.st}}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+       </table>
+     </div>
     </body>
 
 </html>
