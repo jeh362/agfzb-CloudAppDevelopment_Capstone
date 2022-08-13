@@ -15,39 +15,63 @@
 
     <body>
     <!--Add a nav bar here -->
-    <nav class="navbar navbar-light bg-light">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="#">Best Cars</a>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">Car Dealership</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav mr-auto">
+            <a class="nav-item nav-link" href="/djangoapp/">Home</a>
+            <a class="nav-item nav-link" href="/djangoapp/about">About</a>
+            <a class="nav-item nav-link" href="/djangoapp/contact">Contact Us</a>
             </div>
-            <ul class="nav navbar-nav navbar-right">
-                <li>
-                    <a class="btn btn-link" href="/about">About Us</a>
-                </li>
-                <li>
-                    <a class="btn btn-link" href="/contact">Contact Us</a>
-                </li>
-                {% if user.is_authenticated %}
-                <li>
-                    <a class="btn btn-link" href="#">{{ user.first_name }}({{ user.username }})</a>
-                    <a class="btn btn-link" href="{% url 'dealership:logout' %}">Logout</a>
-                </li>
-                {% else %}
-                <li>
-                    <form class="form-inline" action="{% url 'dealership:login' %}" method="post">
-                        {% csrf_token %}
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Username" name="username" >
-                            <input type="password" class="form-control" placeholder="Password" name="psw" >
-                            <button class="btn btn-primary" type="submit">Login</button>
-                            <a class="btn btn-link" href="{% url 'dealership:registration' %}">Sign Up</a>
-                        </div>
-                    </form>
-                </li>
-                {% endif %}
-            </ul>
+
+            <div class="navbar-nav navbar-right">
+            {% if request.user.is_authenticated %}
+                <a class="nav-item nav-link text-primary" href="#">({{ request.user.username }})</a>
+                <a class="nav-item nav-link text-primary" href="{% url 'djangoapp:logout' %}">Logout</a>
+            {% else %}
+            <form method="POST" action="{% url 'djangoapp:login' %}">
+                {% csrf_token %}
+                <div class="form-row justify-content-end">
+                <div class="col-3">
+                    <input class="form-control mr-sm-1" type="text" name="user">
+                </div>
+                <div class="col-3">
+                    <input class="form-control mr-sm-1" type="password" name="password">
+                </div>
+                <div class="col-2">
+                    <button class="btn btn-info" type="submit">Login</button>
+                </div>
+                <div class="col-2">
+                    <a class="btn btn-link" href="{% url 'djangoapp:register' %}">Sign Up</a>
+                </div>
+                </div>
+            </form>
+            {% endif %}
+            </div>
+
         </div>
-    </nav>
+        </nav>
+        {% if 'msg' in request.GET %}
+        {% if request.GET.msg == 'login_failed' %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Log In failed!</strong> user or password incorrect.
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+        {% endif %}
+        {% if request.GET.msg == 'logout' %}
+            <div class="alert alert-info alert-dismissible fade show" role="alert">
+            <strong>{{ request.GET.user }}'s</strong> session closed.
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+        {% endif %}
+        {% endif %}
 
     <!--Add a dealer table here -->
 
