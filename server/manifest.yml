@@ -1,11 +1,11 @@
   applications:
-  - name: djangoapp
+  - name: jeh362-djangoapp
     routes:
-      - route: $HOST.$DOMAIN
+      - route: jeh362-djangoapp.us-south.cf.appdomain.cloud
     memory: 128M
     buildpack: python_buildpack
-  - name: djangoapp-nginx
+  - name: jeh362-djangoapp-nginx
     routes:
-      - route: $HOST.$DOMAIN/static
+      - route: jeh362-djangoapp.us-south.cf.appdomain.cloud/static
     memory: 128M
     buildpack: staticfile_buildpack
